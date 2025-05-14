@@ -1,3 +1,7 @@
+venv/
+venv39/
+*.pyc
+.DS_Store
 main/test.pyw
 main/login.py
 __pycache__
