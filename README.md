@@ -2,28 +2,59 @@
 
 Versiones: 
 + Python 3.9.5
-+ Tkinter 8.6
-+ Matplotlib 3.4.3
-+ tkcalendar 1.6.1
++ pillow==8.3.2
++ matplotlib==3.4.3
++ tkcalendar==1.6.1
++ tensorflow==2.6.0
++ nltk==3.6.3
++ numpy==1.21.2
++ scikit-learn==0.24.2
 
-Librerias: Tkinter, Pillow, Matplotlib, Tkcalendar
+Librerias: Tkinter, Pillow, Matplotlib, Tkcalendar, tensorflow, nltk, numpy, scikit-learn
 
-## Paso a paso
+
+## Paso 1:
++ Instalar Python 3.9.5
++ https://www.python.org/ftp/python/3.9.5/python-3.9.5-amd64.exe
++ Activar la opción de añadir al path en la instalación y para todos los usuarios
+
+## Paso 2:
+
 + Clonar repositorio
-+ Instalar las librerías necesarias
-+ Seguir instrucciones de acuerdo al IDE utilizado
 
-## Instalación librerias necesarias:
-3.0+
-+ `pip install Pillow`
-+ `pip install matplotlib`
-+ `pip install tkcalendar`
++ git clone https://github.com/victorflorest/tuChanchita-App.git
 
-3.10
-+ Descargar el archivo "matplotlib‑3.4.3‑cp310‑cp310‑win_amd64.whl" desde -> https://www.lfd.uci.edu/~gohlke/pythonlibs/#matplotlib
-+ Copiar el archivo en la carpeta raíz "TRABAJO_FINAL"
-+ Correr el siguiente comando
-+ `pip install matplotlib-3.4.3-cp310-cp310-win_amd64.whl`
+## Paso 3:
+
++ Nos dirigimos a la terminal y ingresamos los siguientes comandos:
+
++ py -3.9 -m venv venv39
+
++ .\venv39\Scripts\activate
+
++ en caso esto no funcione ejecutamos como administrados el powershell y ejecutamos el siguiente comando:
+
++ Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+
++ y luego presionamos "S" para confirmar el comando
+
++ volvemos a ejecutar ".\venv39\Scripts\activate" en la terminal del visual studio code y nos debería aparecer entre parentesis y de color verde (venv39) al comienzo de la linea de comandos
+
+## Paso 4:
+
++ Instalaremos las librerías
+
++ pip install -r requirements.txt
+
+## Paso 5:
+
++ ejecutamos el programa
+
++ python main/main.pyw
+
+
+## En caso cierras y vuelvas a abrir y no puedas ejecutar con python main/main.pyw solo escribe este comando .\venv39\Scripts\activate y ya podrás o presiona F1 escribes Select Interpreter y selecciona el que contenga venv39 y así podrás ejecutar el programa sin necesidad de escribir .\venv39\Scripts\activate cada que salgas y entres del programa
+
 
 ## Instrucciones por IDE
 # VSCode
@@ -32,18 +63,3 @@ Librerias: Tkinter, Pillow, Matplotlib, Tkcalendar
 + Cambiar el servidor de python a Pylance
 + `"python.languageServer": "Pylance"`
 + Recomendado usar el plugin Code Runner
-
-# Pycharm
-+ Establecer Trabajo_Final como carpeta raíz.
-
-# CMD o Powershell
-+ Seguir la siguiente lista de comandos
-+ `cd ".../Trabajo_Final/"`
-+ `py main/main.pyw`
-
-## Posibles adicionales V2.0 
-+ Reporte por tienda
-+ Agregar eliminación lógica al borrar metodo de pago
-+ Mostrar reportes de metodos de pago eliminados.
-+ Estilos
-+ Mejorar los helpers
