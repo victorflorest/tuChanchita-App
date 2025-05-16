@@ -46,7 +46,14 @@ Librerias: Tkinter, Pillow, Matplotlib, Tkcalendar, tensorflow, nltk, numpy, sci
 
 + pip install -r requirements.txt
 
+
 ## Paso 5:
+
++ Ejecutamos el siguiente comando
+
++ python main/chatbot_model/train_chatbot.py
+
+## Paso 6:
 
 + ejecutamos el programa
 
