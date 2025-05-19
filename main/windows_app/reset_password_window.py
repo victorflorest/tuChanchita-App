@@ -1,21 +1,31 @@
 from tkinter import *
 from tkinter import messagebox as MessageBox
+from PIL import Image, ImageTk
 import os
 import helpers.readfiles as readfiles
 import windows_app.login_window as login_w
 
 def ResetPassword(root, mainFrame, correo_usuario):
     root.title("Restablecer Contraseña")
-    mainFrame.config(width=425, height=700, bg="white")
+    mainFrame.config(width=425, height=700)
     mainFrame.pack()
     my_path = readfiles.Route()
 
-    Label(mainFrame, text="Nueva Contraseña", font=("Arial", 14), bg="white").place(x=130, y=60)
-    Label(mainFrame, text=f"Correo: {correo_usuario}", bg="white").place(x=70, y=130)
+    # Fondo
+    try:
+        bg_path = os.path.join(my_path, "images", "background-reset-password.png")
+        bg_image = Image.open(bg_path).resize((425, 700))
+        bg_photo = ImageTk.PhotoImage(bg_image)
+        mainFrame.bg_photo = bg_photo  # Evita que se borre por el recolector de basura
+        Label(mainFrame, image=bg_photo).place(x=0, y=0, relwidth=1, relheight=1)
+    except Exception as e:
+        print("⚠️ Error cargando fondo:", e)
+        mainFrame.config(bg="white")
 
-    Label(mainFrame, text="Nueva contraseña:", bg="white").place(x=70, y=180)
-    entry_pass = Entry(mainFrame, show="*", width=30)
-    entry_pass.place(x=70, y=205)
+    # Etiquetas y campos
+    Label(mainFrame, text=f"Correo: {correo_usuario}", font=("Calibri", 14), fg="white", bg="#090B64").place(x=95, y=318)
+    entry_pass = Entry(mainFrame, width=30)
+    entry_pass.place(x=125, y=405)
 
     def guardar_contraseña():
         nueva = entry_pass.get().strip()
@@ -51,4 +61,6 @@ def ResetPassword(root, mainFrame, correo_usuario):
             print("Error cambiando la contraseña:", e)
             MessageBox.showerror("Error", "No se pudo actualizar la contraseña.")
 
-    Button(mainFrame, text="Guardar nueva contraseña", command=guardar_contraseña).place(x=120, y=260)
+    Button(mainFrame, text="Guardar nueva contraseña", command=guardar_contraseña, 
+           font=("Arial", 11, "underline"), fg="white", bg="#41AADC", 
+           relief="flat", activebackground="#0d8ddf", bd=0, padx=15, pady=3).place(x=110, y=462)
