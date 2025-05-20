@@ -1,0 +1,34 @@
+{
+  "intents": [
+    {
+      "tag": "saludo",
+      "patterns": ["Hola", "Buenos días", "¿Hay alguien ahí?", "Hey", "Saludos"],
+      "responses": ["¡Hola!", "¿Cómo puedo ayudarte hoy?", "¡Bienvenido! ¿En qué te ayudo?"]
+    },
+    {
+      "tag": "despedida",
+      "patterns": ["Adiós", "Nos vemos", "Hasta luego", "Me voy", "Chao"],
+      "responses": ["¡Adiós!", "Nos vemos pronto.", "Cuídate mucho."]
+    },
+    {
+      "tag": "ahorro",
+      "patterns": ["¿Cómo puedo ahorrar dinero?", "Consejos para ahorrar", "Quiero ahorrar"],
+      "responses": ["Puedes empezar creando un presupuesto mensual.", "Evita compras innecesarias y revisa tus gastos recurrentes.", "Usa TuChanchita para registrar tus gastos y ver dónde puedes recortar."]
+    },
+    {
+      "tag": "gasto",
+      "patterns": ["Gasto mucho", "No sé en qué gasto", "Quiero controlar mis gastos"],
+      "responses": ["Usa los reportes para ver tus patrones de gasto.", "Revisa la categoría con más consumo en TuChanchita y evalúa opciones para reducir."]
+    },
+    {
+      "tag": "ahorro_actual",
+      "patterns": ["¿Cuánto he ahorrado?", "¿Qué tanto estoy ahorrando?", "ahorro actual", "cuánto me sobra"],
+      "responses": ["Calculando tu ahorro actual..."]
+    },
+    {
+      "tag": "categoria_mas_gasto",
+      "patterns": ["¿En qué gasto más?", "mayor categoría de gasto", "categoría con más gastos"],
+      "responses": ["Déjame revisar en qué estás gastando más..."]
+    }
+  ]
+}
