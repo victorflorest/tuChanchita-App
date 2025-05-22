@@ -3,6 +3,8 @@ import windows_app.register_window as register_w
 import windows_app.reports_window as reports_w
 import windows_app.profile_window as profile_w
 import helpers.readfiles as readfiles
+import windows_app.challenges as challenges_w
+from windows_app.investment import investment_module
 import os
 from datetime import date
 from tkinter import Label
@@ -72,7 +74,7 @@ def Dashboard(root, mainFrame):
     root.title("Dashboard")
     mainFrame.destroy()
     mainFrame = Frame(root)
-    mainFrame.config(width = "425", height = "670")
+    mainFrame.config(width = "425", height = "750")
     mainFrame.pack()
     
     amount = TotalMonthSpent()
@@ -120,4 +122,6 @@ def Dashboard(root, mainFrame):
     Button(mainFrame, text="Perfil", width=10, command=lambda: profile_w.Profile(root, mainFrame)).place(x=280, y=580)
     Button(mainFrame, text="Chatbot", width=10, command=lambda: abrir_chatbot(root, mainFrame)).place(x=40, y=630)
     Button(mainFrame, text="Recomendaciones", width=14, command=lambda: rec_w.Recommendations(root, mainFrame)).place(x=140, y=630)
+    Button(mainFrame, text="Inversiones", width=10, command=investment_module).place(x=160, y=680)
+    Button(mainFrame, text="Retos diarios", width=14, command=lambda: challenges_w.Challenges(root, mainFrame)).place(x=30, y=680)
     Button(mainFrame, text="Salir", width=10, command=root.destroy).place(x=280, y=630)
