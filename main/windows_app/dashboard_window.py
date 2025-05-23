@@ -3,12 +3,15 @@ import windows_app.register_window as register_w
 import windows_app.reports_window as reports_w
 import windows_app.profile_window as profile_w
 import helpers.readfiles as readfiles
+import windows_app.challenges as challenges_w
+from windows_app.investment import investment_module
 import os
 from datetime import date
 from tkinter import Label
 import os
 from datetime import date
 import helpers.readfiles as readfiles
+from PIL import Image, ImageTk, ImageDraw
 
 import windows_app.recommendations_window as rec_w  
 
@@ -30,8 +33,6 @@ def CreateDashList():
     
     return registros[-10:]
 
-
-
 #* Función que calcula y devuelve el total registrado del mes.
 def TotalMonthSpent():
     try:
@@ -47,7 +48,6 @@ def TotalMonthSpent():
     except Exception as e:
         print("❌ Error en TotalMonthSpent:", e)
         return 0.0
-
 
 #* Función que lee el límite para mostrarlo luego.
 def TakeLimit():
@@ -66,15 +66,26 @@ def TakeLimit():
         print("Error al tomar el límite:", e)
         return "Error"
 
-
 #* Estructura de la ventana del Dashboard general.
 def Dashboard(root, mainFrame):
     root.title("Dashboard")
     mainFrame.destroy()
     mainFrame = Frame(root)
-    mainFrame.config(width = "425", height = "670")
+    mainFrame.config(width = "425", height = "700")
     mainFrame.pack()
-    
+
+    # Cargar fondo de la ventana
+    try:
+        my_path = readfiles.Route()
+        bg_path = os.path.join(my_path, "images", "background.jpg")  # Asegúrate de que el archivo esté en el lugar correcto
+        bg_image = Image.open(bg_path).resize((425, 700))  # Redimensiona la imagen al tamaño de la ventana
+        bg_photo = ImageTk.PhotoImage(bg_image)
+        mainFrame.bg_photo = bg_photo
+        Label(mainFrame, image=bg_photo).place(x=0, y=0, relwidth=1, relheight=1)
+    except Exception as e:
+        print("⚠️ Error cargando fondo:", e)
+        mainFrame.config(bg="blue")
+
     amount = TotalMonthSpent()
     shownRegisters = CreateDashList()
     finalLimit = TakeLimit()
@@ -113,11 +124,10 @@ def Dashboard(root, mainFrame):
             Label(mainFrame, text="S/." + shownRegisters[i][1], bg="white").place(x=340, y=positiony)
             positiony += 30
 
-
-
     Button(mainFrame, text="Registro", width=10, command=lambda: register_w.Register(root, mainFrame)).place(x=40, y=580)
     Button(mainFrame, text="Reportes", width=10, command=lambda: reports_w.Reports(root, mainFrame)).place(x=160, y=580)
     Button(mainFrame, text="Perfil", width=10, command=lambda: profile_w.Profile(root, mainFrame)).place(x=280, y=580)
-    Button(mainFrame, text="Chatbot", width=10, command=lambda: abrir_chatbot(root, mainFrame)).place(x=40, y=630)
-    Button(mainFrame, text="Recomendaciones", width=14, command=lambda: rec_w.Recommendations(root, mainFrame)).place(x=140, y=630)
-    Button(mainFrame, text="Salir", width=10, command=root.destroy).place(x=280, y=630)
+    Button(mainFrame, text="Chatbot", width=10, command=lambda: abrir_chatbot(root, mainFrame)).place(x=40, y=620)
+    Button(mainFrame, text="Recomendaciones", width=14, command=lambda: rec_w.Recommendations(root, mainFrame)).place(x=140, y=620)
+    Button(mainFrame, text="Retos diarios", width=14, command=lambda: challenges_w.Challenges(root, mainFrame)).place(x=280, y=620)
+    Button(mainFrame, text="Inversiones", width=10, command=investment_module).place(x=160, y=660)

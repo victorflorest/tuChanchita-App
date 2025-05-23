@@ -1,11 +1,28 @@
 from tkinter import *
 from tkinter import messagebox as MessageBox
+from PIL import Image, ImageTk
 import windows_app.profile_window as profile_w
 import helpers.readfiles as readfiles
 from datetime import date
 import os
 
 def SetLimit(root, mainFrame):
+    # Fondo de la ventana
+    try:
+        my_path = readfiles.Route()
+        ruta_fondo = os.path.join(my_path, "images", "FONDO_PROTO.jpg")  # Cambiado a FONDO_PROTO.jpg
+        imagen_fondo = Image.open(ruta_fondo).resize((425, 700))
+        foto_fondo = ImageTk.PhotoImage(imagen_fondo)
+        fondo_label = Label(mainFrame, image=foto_fondo)
+        fondo_label.image = foto_fondo  # Evitar que se libere de memoria
+        fondo_label.place(x=0, y=0, relwidth=1, relheight=1)
+    except Exception as e:
+        print("⚠️ Error cargando fondo:", e)
+        # Fallback a gradiente
+        canvas = Canvas(mainFrame, width=425, height=700, bg="#4B0082", highlightthickness=0)
+        canvas.pack()
+        canvas.create_oval(200, 400, 600, 800, fill="#6A0DAD", outline="")
+
     monto = limitEntry.get().strip()
 
     if not monto:
@@ -38,7 +55,7 @@ def SetLimit(root, mainFrame):
 
         MessageBox.showinfo("Límite actualizado", "Tu límite mensual fue guardado correctamente.")
 
-        # 🔥 SOLUCIÓN: Limpiar frame anterior para evitar superposición
+        # Limpiar frame anterior para evitar superposición
         for widget in mainFrame.winfo_children():
             widget.destroy()
         mainFrame.destroy()
@@ -49,7 +66,6 @@ def SetLimit(root, mainFrame):
         print("❌ Error al guardar el límite:", e)
         MessageBox.showerror("Error", "Ocurrió un error al guardar el límite.")
 
-#* Estructura de la ventana donde se asigna el límite mensual.
 def Limit(root, mainFrame):
     monthDic = {
         1: "Enero", 2: "Febrero", 3: "Marzo", 4: "Abril", 5: "Mayo",
@@ -61,17 +77,48 @@ def Limit(root, mainFrame):
     global limitEntry
     limitEntry = StringVar()
     mainFrame.destroy()
-    mainFrame = Frame()
+    mainFrame = Frame(root)  # Especificar que el Frame pertenece a root
     mainFrame.config(width=425, height=700)
     mainFrame.pack()
 
-    Label(mainFrame, text="Establece tu límite mensual").place(x=140, y=70)
-    Label(mainFrame, text="Mes: " + monthDic[date.today().month]).place(x=180, y=110)
-    Label(mainFrame, text="Ingresa tu monto límite: ").place(x=65, y=150)
-    Entry(mainFrame, width=25, borderwidth=2, textvariable=limitEntry).place(x=220, y=150)
+    # Fondo
+    try:
+        my_path = readfiles.Route()
+        ruta_fondo = os.path.join(my_path, "images", "FONDO_PROTO.jpg")  # Cambiado a FONDO_PROTO.jpg
+        imagen_fondo = Image.open(ruta_fondo).resize((425, 700))
+        foto_fondo = ImageTk.PhotoImage(imagen_fondo)
+        mainFrame.foto_fondo = foto_fondo  # Mantén la referencia
+        Label(mainFrame, image=foto_fondo).place(x=0, y=0, relwidth=1, relheight=1)
+    except Exception as e:
+        print("⚠️ Error cargando fondo:", e)
+        # Fallback a gradiente
+        canvas = Canvas(mainFrame, width=425, height=700, bg="#4B0082", highlightthickness=0)
+        canvas.pack()
+        canvas.create_oval(200, 400, 600, 800, fill="#6A0DAD", outline="")
 
-    Button(mainFrame, text="Guardar", width=10, command=lambda: SetLimit(root, mainFrame)).place(x=170, y=220)
-    Button(mainFrame, text="Volver", width=10, command=lambda: volver_a_perfil(root, mainFrame)).place(x=170, y=280)
+    # Frame para el título
+    title_frame = Frame(mainFrame, bg="#3B82F6", padx=20, pady=10)
+    title_frame.place(relx=0.5, rely=0.25, anchor="center")
+    Label(title_frame, text="Establece tu límite mensual", font=("Arial", 14, "bold"), fg="white", bg="#3B82F6").pack()
+
+    # Frame para el mes
+    month_frame = Frame(mainFrame, bg="#3B82F6", padx=15, pady=8)
+    month_frame.place(relx=0.5, rely=0.375, anchor="center")
+    Label(month_frame, text="Mes: " + monthDic[date.today().month], font=("Arial", 12), fg="white", bg="#3B82F6").pack()
+
+    # Frame para el monto
+    amount_frame = Frame(mainFrame, bg="#3B82F6", padx=15, pady=8)
+    amount_frame.place(relx=0.5, rely=0.5, anchor="center")
+    Label(amount_frame, text="Ingresa tu monto límite:", font=("Arial", 12), fg="white", bg="#3B82F6").pack()
+
+    # Frame para la entrada
+    entry_frame = Frame(mainFrame, bg="#1E3A8A", padx=10, pady=5)
+    entry_frame.place(relx=0.5, rely=0.575, anchor="center")
+    Entry(entry_frame, width=20, textvariable=limitEntry, fg="white", font=("Arial", 12), justify="center", bg="#1E3A8A", highlightthickness=0, bd=0).pack()
+
+    # Botones
+    Button(mainFrame, text="Volver", font=("Arial", 12), bg="#41AADC", fg="white", activebackground="#0d8ddf", relief="flat", bd=0, padx=20, pady=10, command=lambda: volver_a_perfil(root, mainFrame)).place(relx=0.3, y=500, anchor="center")
+    Button(mainFrame, text="Guardar", font=("Arial", 12), bg="#41AADC", fg="white", activebackground="#0d8ddf", relief="flat", bd=0, padx=20, pady=10, command=lambda: SetLimit(root, mainFrame)).place(relx=0.7, y=500, anchor="center")
 
 def volver_a_perfil(root, mainFrame):
     for widget in mainFrame.winfo_children():

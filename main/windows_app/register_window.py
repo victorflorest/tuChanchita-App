@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox as MessageBox
 from tkcalendar import *
+from PIL import Image, ImageTk
 import windows_app.dashboard_window as dashboard_w
 import helpers.readfiles as readfiles
 import os
@@ -113,6 +114,17 @@ def Register(root, mainFrame):
     mainFrame = Frame()
     mainFrame.config(width=425, height=700)
     mainFrame.pack()
+
+    # Fondo de la ventana
+    try:
+        ruta_fondo = os.path.join(readfiles.Route(), "images", "FONDO_PROTO.jpg")
+        imagen_fondo = Image.open(ruta_fondo).resize((425, 700))
+        foto_fondo = ImageTk.PhotoImage(imagen_fondo)
+        fondo_label = Label(mainFrame, image=foto_fondo)
+        fondo_label.image = foto_fondo  # Evitar que se libere de memoria
+        fondo_label.place(x=0, y=0, relwidth=1, relheight=1)
+    except Exception as e:
+        print("⚠️ Error cargando fondo:", e)
 
     Label(mainFrame, text="Ingrese el monto gastado").place(x=150, y=50)
     Entry(mainFrame, width=25, borderwidth=2, textvariable=amountEntry).place(x=145, y=75)

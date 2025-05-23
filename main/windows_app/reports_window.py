@@ -9,10 +9,14 @@ import tkinter.messagebox as MessageBox
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas as pdf_canvas
 import os
+from PIL import Image, ImageTk
 
-monthDic = {1: "Enero", 2:"Febrero", 3:"Marzo", 4:"Abril", 5:"Mayo", 6:"Junio", 7:"Julio", 8:"Agosto", 9:"Septiembre", 10:"Octubre", 11:"Noviembre", 12:"Diciembre"}
+monthDic = {
+    1: "Enero", 2: "Febrero", 3: "Marzo", 4: "Abril", 5: "Mayo", 6: "Junio",
+    7: "Julio", 8: "Agosto", 9: "Septiembre", 10: "Octubre", 11: "Noviembre", 12: "Diciembre"
+}
 
-def CreateGraphV(frame, y=0):
+def CreateGraphV(frame):
     registers = readfiles.GetRegisterFile()
     categories = ["Entretenimiento", "Comida", "Educación", "Ropa", "Otros"]
     totals = {c: 0 for c in categories}
@@ -26,17 +30,21 @@ def CreateGraphV(frame, y=0):
             if r[2] in totals:
                 totals[r[2]] += float(r[1])
 
-    fig, ax = plt.subplots(figsize=(4, 2), dpi=100)
+    fig, ax = plt.subplots(figsize=(4, 2), dpi=100, facecolor='#0d8ddf')
     categorias = list(totals.keys())
     montos = list(totals.values())
-    ax.bar(categorias, montos, color="#5DADE2")
-    ax.set_title("Gasto por Categoría (Mes actual)")
+    ax.bar(categorias, montos, color="#0d8ddf")
+    ax.set_title("Gasto por Categoría (Mes actual)", fontsize=10, color="white", pad=10)
+    ax.set_facecolor('#0d8ddf')
+    ax.tick_params(axis='x', colors='white', labelsize=8, rotation=45)
+    ax.tick_params(axis='y', colors='white', labelsize=8)
     for i, v in enumerate(montos):
-        ax.text(i, v, f"S/. {v:.2f}", ha="center", va="bottom")
+        ax.text(i, v, f"S/. {v:.2f}", ha="center", va="bottom", fontsize=8, color="white")
+    plt.tight_layout()
 
     canvas_chart = FigureCanvasTkAgg(fig, master=frame)
     canvas_chart.draw()
-    canvas_chart.get_tk_widget().pack(pady=5)
+    canvas_chart.get_tk_widget().pack(pady=2)
 
 def CreateGraphH(frame):
     registers = readfiles.GetRegisterFile()
@@ -51,17 +59,21 @@ def CreateGraphH(frame):
             payments[r[3]] = payments.get(r[3], 0) + float(r[1])
 
     if payments:
-        fig, ax = plt.subplots(figsize=(4, 2), dpi=100)
+        fig, ax = plt.subplots(figsize=(3.75, 1.5), dpi=100, facecolor='#0d8ddf')
         labels = list(payments.keys())
         values = list(payments.values())
         ax.barh(labels, values, color="#58D68D")
-        ax.set_title("Gasto por Método de Pago")
+        ax.set_title("Gasto por Método de Pago", fontsize=10, color="white", pad=10)
+        ax.set_facecolor('#0d8ddf')
+        ax.tick_params(axis='x', colors='white', labelsize=8)
+        ax.tick_params(axis='y', colors='white', labelsize=8)
         for i, v in enumerate(values):
-            ax.text(v, i, f"S/. {v:.2f}", va="center")
-        
+            ax.text(v, i, f"S/. {v:.2f}", va="center", fontsize=8, color="white")
+        plt.tight_layout()
+
         canvas_chart = FigureCanvasTkAgg(fig, master=frame)
         canvas_chart.draw()
-        canvas_chart.get_tk_widget().pack(pady=5)
+        canvas_chart.get_tk_widget().pack(pady=2)
 
 def CreateTable(frame):
     ruta = readfiles.Route()
@@ -75,15 +87,25 @@ def CreateTable(frame):
             mes = int(r[5])
             resumen[monthDic[mes]] += float(r[1])
 
-    Label(frame, text="Resumen por mes", font=("Arial", 12)).pack(pady=(10, 0))
-    tabla = ttk.Treeview(frame, columns=("Mes", "Total"), show="headings", height=8)
-    tabla.column("Mes", width=100)
-    tabla.column("Total", width=100, anchor=CENTER)
+    style = ttk.Style()
+    style.theme_use('default')
+    style.configure("Custom.Treeview", 
+                    background="#0d8ddf", 
+                    foreground="white", 
+                    fieldbackground="#0d8ddf")
+    style.configure("Custom.Treeview.Heading", 
+                    background="#0d8ddf", 
+                    foreground="white")
+
+    Label(frame, text="Resumen por mes", font=("Arial", 12), bg='#0d8ddf', fg='white').pack(pady=(5, 0))
+    tabla = ttk.Treeview(frame, columns=("Mes", "Total"), show="headings", height=12, style="Custom.Treeview")
+    tabla.column("Mes", width=200, anchor=CENTER)
+    tabla.column("Total", width=200, anchor=CENTER)
     tabla.heading("Mes", text="Mes")
     tabla.heading("Total", text="Total Gastado")
     for mes, monto in resumen.items():
         tabla.insert("", "end", values=(mes, f"S/. {monto:.2f}"))
-    tabla.pack(pady=10)
+    tabla.pack(pady=5)
 
 def ExportToPDF():
     try:
@@ -128,13 +150,16 @@ def Reports(root, mainFrame):
     root.title("Reporte Mensual")
     mainFrame.destroy()
 
+    # Ajustamos el tamaño del contenedor al mismo que el Login (425x700)
     container = Frame(root, width=425, height=700)
-    container.pack(fill="both", expand=True)
+    container.pack(fill="both", expand=False)
 
-    canvas = Canvas(container, bg="#f0f0f0", width=425, height=700)
+    # Creamos un Canvas con Scrollbar para permitir desplazamiento
+    canvas = Canvas(container, width=425, height=700, bg='#0d8ddf')  # Fondo azul como respaldo
     scrollbar = Scrollbar(container, orient="vertical", command=canvas.yview)
-    scrollable_frame = Frame(canvas, bg="#f0f0f0")
+    scrollable_frame = Frame(canvas)
 
+    # Configuramos el desplazamiento
     scrollable_frame.bind(
         "<Configure>",
         lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
@@ -146,13 +171,25 @@ def Reports(root, mainFrame):
     canvas.pack(side="left", fill="both", expand=True)
     scrollbar.pack(side="right", fill="y")
 
-    # Contenido dentro del frame con scroll
-    Label(scrollable_frame, text="Reporte Mensual", font=("Arial", 16), bg="#f0f0f0").pack(pady=(20, 0))
-    Label(scrollable_frame, text=f"Mes actual: {monthDic[date.today().month]}", bg="#f0f0f0").pack(pady=(0, 10))
+    # Fondo personalizado ajustado para cubrir toda la ventana visible
+    try:
+        my_path = readfiles.Route()
+        ruta_fondo = os.path.join(my_path, "images", "Reporte_Mensual.png")
+        imagen_fondo = Image.open(ruta_fondo).resize((425, 700), Image.Resampling.LANCZOS)  # Redimensionamos con mejor calidad
+        foto_fondo = ImageTk.PhotoImage(imagen_fondo)
+        fondo_label = Label(scrollable_frame, image=foto_fondo)
+        fondo_label.image = foto_fondo  # Evita el garbage collection
+        fondo_label.place(x=0, y=0, relwidth=1, relheight=1)
+    except Exception as e:
+        print("⚠️ Error cargando fondo:", e)
+
+    # Contenido sobre el fondo
+    Label(scrollable_frame, text="Reporte Mensual", font=("Arial", 16), bg='#0d8ddf', fg='white').pack(pady=(10, 0))
+    Label(scrollable_frame, text=f"Mes actual: {monthDic[date.today().month]}", font=("Arial", 10), bg='#0d8ddf', fg='white').pack(pady=(0, 5))
 
     CreateGraphV(scrollable_frame)
     CreateGraphH(scrollable_frame)
     CreateTable(scrollable_frame)
 
-    Button(scrollable_frame, text="Exportar a PDF", command=ExportToPDF, width=30).pack(pady=10)
-    Button(scrollable_frame, text="Volver", command=lambda: dashboard_w.Dashboard(root, container), width=30).pack(pady=(0, 20))
+    Button(scrollable_frame, text="Exportar a PDF", command=ExportToPDF, width=30, bg="#4682B4", fg="white", activebackground="#5DADE2", activeforeground="white").pack(pady=5)
+    Button(scrollable_frame, text="Volver", command=lambda: dashboard_w.Dashboard(root, container), width=30, bg="#4682B4", fg="white", activebackground="#5DADE2", activeforeground="white").pack(pady=(0, 5))
