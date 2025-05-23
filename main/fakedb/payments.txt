@@ -2,3 +2,7 @@ gianfranco22.ft@gmail.com,1,BCP,1234,06,25
 
 gianfranco22.ft@gmail.com,1,BCP,4311,8,2029
 gianfranco22.ft@gmail.com,1,Bank of America,6311,08,30
+asas,1,BCP,1234,07,29
+manrique_araujo@gmail.com,asd,asdasd,adasd,asdads,asdasd
+1,camila,Débito,VISA,WEQWER3RASAS,26/11/2025
+1,Yumar Manrique,Débito,VISA,1234567894561234,26/12/2025

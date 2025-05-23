@@ -2,3 +2,5 @@
 gianfranco22.ft@gmail.com,5001,Comida,BCP ****4311,2025-05-13,5,La Central
 gianfranco22.ft@gmail.com,1231,Educación,Bank of America ****6311,2025-05-13,5,zzz
 gianfranco22.ft@gmail.com,1231,Ropa,Bank of America ****6311,2025-05-13,5,Sagafalabella
+asas,50000,Comida,BCP ****1234,2025-05-18,5,OXXO
+manrique_araujo@gmail.com,200,Educación,asdasd ****adasd,2025-05-14,5,bembos

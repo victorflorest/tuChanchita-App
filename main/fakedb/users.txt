@@ -2,3 +2,6 @@ gianfranco22.ft@gmail.com,123456,Victor,Flores
 diego.alexis.flores62@gmail.com,12345,Diego,Flores
 osccoanac@gmail.com,123456789,Ana,Oscco
 flortrujillano@gmail.com,123456,Flor,Trujillano
+asas,123,asas,asas
+manrique_araujo@gmail.com,123456,Yumar,Manrique
+1,2,asdasd,asdasd

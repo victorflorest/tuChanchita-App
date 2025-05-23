@@ -60,6 +60,15 @@ def Profile(root, mainFrame):
     mainFrame.config(width=425, height=700, bg="white")
     mainFrame.pack()
     root.update()
+    try:
+        ruta_fondo = os.path.join(my_path, "images", "FONDO_PROTO.jpg")
+        imagen_fondo = Image.open(ruta_fondo).resize((425, 700))
+        foto_fondo = ImageTk.PhotoImage(imagen_fondo)
+        fondo_label = Label(mainFrame, image=foto_fondo)
+        fondo_label.image = foto_fondo  # Evitar que se libere de memoria
+        fondo_label.place(x=0, y=0, relwidth=1, relheight=1)
+    except Exception as e:
+        print("⚠️ Error cargando fondo:", e)
 
     user_info = get_user_info()
     nombre, apellido, correo = user_info[2], user_info[3], user_info[0]

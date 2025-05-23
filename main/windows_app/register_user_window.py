@@ -31,37 +31,49 @@ def save_user(nombre, apellido, correo, password, root, mainFrame):
     mainFrame.destroy()
     login_w.Login(root, Frame(root))
 
-
 def RegisterUserWindow(root, mainFrame):
+    import os
+    from PIL import Image, ImageTk
+
     root.title("Registro de Usuario")
     mainFrame.destroy()
-    mainFrame = Frame()
-    mainFrame.config(width=425, height=500, bg="white")
+    mainFrame = Frame(root)
+    mainFrame.config(width=425, height=700)
     mainFrame.pack()
 
-    Label(mainFrame, text="Crear cuenta", font=("Arial", 16), bg="white").place(x=150, y=30)
+    # Cargar fondo igual que en Login
+    my_path = readfiles.Route()
+    try:
+        bg_path = os.path.join(my_path, "images", "background-user-register.png")
+        bg_image = Image.open(bg_path).resize((425, 700))
+        bg_photo = ImageTk.PhotoImage(bg_image)
+        mainFrame.bg_photo = bg_photo  # Evita recolección de basura
+        Label(mainFrame, image=bg_photo).place(x=0, y=0, relwidth=1, relheight=1)
+    except Exception as e:
+        print("⚠️ Error cargando fondo:", e)
+        mainFrame.config(bg="white")
 
-    Label(mainFrame, text="Nombre:", bg="white").place(x=70, y=100)
-    entry_nombre = Entry(mainFrame, width=30)
-    entry_nombre.place(x=70, y=125)
+    # Entradas y etiquetas sobre el fondo
 
-    Label(mainFrame, text="Apellido:", bg="white").place(x=70, y=160)
-    entry_apellido = Entry(mainFrame, width=30)
-    entry_apellido.place(x=70, y=185)
+    entry_nombre = Entry(mainFrame, width=14)
+    entry_nombre.place(x=140, y=345)
 
-    Label(mainFrame, text="Correo electrónico:", bg="white").place(x=70, y=220)
-    entry_correo = Entry(mainFrame, width=30)
-    entry_correo.place(x=70, y=245)
+    entry_apellido = Entry(mainFrame, width=14)
+    entry_apellido.place(x=235, y=345)
 
-    Label(mainFrame, text="Contraseña:", bg="white").place(x=70, y=280)
-    entry_password = Entry(mainFrame, width=30, show="*")
-    entry_password.place(x=70, y=305)
+    entry_correo = Entry(mainFrame, width=26)
+    entry_correo.place(x=160, y=433)
 
-    Button(mainFrame, text="Registrarse", width=15, command=lambda: save_user(
+    entry_password = Entry(mainFrame, width=26, show="*")
+    entry_password.place(x=160, y=520)
+
+    Button(mainFrame, text="Registrarse", command=lambda: save_user(
         entry_nombre.get().strip(),
         entry_apellido.get().strip(),
         entry_correo.get().strip(),
         entry_password.get().strip(),
-        root, mainFrame)).place(x=150, y=370)
+        root, mainFrame), font=("Arial", 11), bg="#41AADC", fg="white", activebackground="#0d8ddf",
+           relief="flat", bd=0, padx=11, pady=3).place(x=93, y=595)
 
-    Button(mainFrame, text="Volver al Login", command=lambda: [mainFrame.destroy(), login_w.Login(root, Frame(root))]).place(x=155, y=420)
+    Button(mainFrame, text="Volver", command=lambda: [mainFrame.destroy(), login_w.Login(root, Frame(root))], font=("Arial", 11), bg="#41AADC", fg="white", activebackground="#0d8ddf",
+           relief="flat", bd=0, padx=28, pady=3).place(x=233, y=595)

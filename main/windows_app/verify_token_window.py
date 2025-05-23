@@ -1,6 +1,7 @@
 
 from tkinter import *
 from tkinter import messagebox as MessageBox
+from PIL import Image, ImageTk
 import os
 import windows_app.reset_password_window as reset_w
 import helpers.readfiles as readfiles
@@ -10,6 +11,17 @@ def VerifyToken(root, mainFrame, correo_usuario):
     mainFrame.config(width=425, height=700, bg="white")
     mainFrame.pack()
     my_path = readfiles.Route()
+
+     # Fondo de la ventana
+    try:
+        ruta_fondo = os.path.join(my_path, "images", "FONDO_PROTO.jpg")
+        imagen_fondo = Image.open(ruta_fondo).resize((425, 700))
+        foto_fondo = ImageTk.PhotoImage(imagen_fondo)
+        fondo_label = Label(mainFrame, image=foto_fondo)
+        fondo_label.image = foto_fondo  # Evitar que se libere de memoria
+        fondo_label.place(x=0, y=0, relwidth=1, relheight=1)
+    except Exception as e:
+        print("⚠️ Error cargando fondo:", e)
 
     Label(mainFrame, text="Verificar código de seguridad", font=("Arial", 14), bg="white").place(x=80, y=60)
     Label(mainFrame, text=f"Correo: {correo_usuario}", bg="white").place(x=70, y=130)

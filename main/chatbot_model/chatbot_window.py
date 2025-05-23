@@ -1,4 +1,5 @@
 from tkinter import *
+from PIL import Image, ImageTk  # Para manejar imágenes JPG
 import json, pickle, numpy as np, random
 from nltk.stem import WordNetLemmatizer
 from tensorflow.keras.models import load_model
@@ -7,8 +8,6 @@ from datetime import date
 import nltk
 import os
 
-
-
 nltk.download('punkt')
 lemmatizer = WordNetLemmatizer()
 
@@ -16,7 +15,6 @@ model = load_model(os.path.join("main", "chatbot_model", "models", "chat_model.h
 intents = json.loads(open(os.path.join("main", "chatbot_model", "data", "intents.json"), encoding="utf-8").read())
 words = pickle.load(open(os.path.join("main", "chatbot_model", "data", "words.pkl"), "rb"))
 classes = pickle.load(open(os.path.join("main", "chatbot_model", "data", "classes.pkl"), "rb"))
-
 
 def clean_up_sentence(sentence):
     return [lemmatizer.lemmatize(w.lower()) for w in nltk.word_tokenize(sentence)]
@@ -31,9 +29,6 @@ def predict_class(sentence):
     ERROR_THRESHOLD = 0.25
     return [{"intent": classes[i], "probability": str(r)} for i, r in enumerate(res) if r > ERROR_THRESHOLD]
 
-import helpers.readfiles as readfiles
-from datetime import date
-
 def get_response(intents_list):
     if not intents_list:
         return "Lo siento, no entiendo tu mensaje."
@@ -45,7 +40,7 @@ def get_response(intents_list):
     elif tag == "categoria_mas_gasto":
         return categoria_con_mas_gasto()
     
-    # Default response
+    # Respuesta por defecto
     for intent in intents['intents']:
         if intent['tag'] == tag:
             return random.choice(intent['responses'])
@@ -121,22 +116,49 @@ def Chatbot(root, mainFrame):
     mainFrame = Frame(root, width=425, height=700)
     mainFrame.pack()
 
-    chat_log = Text(mainFrame, width=50, height=25, wrap=WORD)
-    chat_log.place(x=10, y=50)
+    # Fondo con imagen FONDO_PROTO.jpg
+    try:
+        my_path = readfiles.Route()
+        bg_path = os.path.join(my_path, "images", "FONDO_PROTO.jpg")
+        bg_image = Image.open(bg_path).resize((425, 700), Image.Resampling.LANCZOS)
+        bg_photo = ImageTk.PhotoImage(bg_image)
+        mainFrame.bg_photo = bg_photo  # Mantener referencia para evitar recolección de basura
+        Label(mainFrame, image=bg_photo).place(x=0, y=0, relwidth=1, relheight=1)
+    except Exception as e:
+        print("⚠️ Error cargando fondo:", e)
+        # Fallback a gradiente si falla la imagen
+        canvas = Canvas(mainFrame, width=425, height=700, bg="#1E3A8A", highlightthickness=0)
+        canvas.pack()
+        canvas.create_rectangle(0, 0, 425, 700, fill="#3B82F6", outline="")
 
-    entry_box = Entry(mainFrame, width=40)
-    entry_box.place(x=10, y=550)
+    # Área de chat
+    chat_log = Text(mainFrame, width=40, height=25, wrap=WORD, bg="#1E3A8A", fg="black", font=("Arial", 12), highlightthickness=0, bd=0)
+    chat_log.place(x=20, y=20)
+    chat_log.config(state=DISABLED)  # Solo lectura
+
+    # Entrada de texto (subida a y=540)
+    entry_frame = Frame(mainFrame, bg="#FFFFFF", width=380, height=40)
+    entry_frame.place(x=20, y=540)
+
+    entry_box = Entry(entry_frame, width=30, bg="#FFFFFF", fg="black", font=("Arial", 12), highlightthickness=0, bd=0)
+    entry_box.place(x=10, y=10, width=320)
+
+    # Botón de enviar (ícono de flecha)
+    send_button = Button(entry_frame, text="➤", command=lambda: send_message(), font=("Arial", 12), bg="#FFFFFF", fg="#000000", relief="flat", bd=0)
+    send_button.place(x=340, y=5)
 
     def send_message():
         msg = entry_box.get()
         if not msg.strip():
             return
 
-        chat_log.insert(END, f"Tú: {msg}\n")
+        # Habilitar el área de texto para insertar
+        chat_log.config(state=NORMAL)
+        chat_log.insert(END, f"Tú: {msg}\n", "user")
         entry_box.delete(0, END)
 
         try:
-            with open("main/fakedb/session.txt", "r", encoding="utf-8") as f:
+            with open(os.path.join(readfiles.Route(), "fakedb", "session.txt"), "r", encoding="utf-8") as f:
                 correo = f.read().strip()
 
             lower_msg = msg.lower()
@@ -158,23 +180,25 @@ def Chatbot(root, mainFrame):
                 ints = predict_class(msg)
                 res = get_response(ints)
 
-            chat_log.insert(END, f"Bot: {res}\n\n")
+            chat_log.insert(END, f"Bot: {res}\n\n", "bot")
+            chat_log.see(END)
 
         except Exception as e:
-            chat_log.insert(END, f"❌ Error: {e}\n\n")
+            chat_log.insert(END, f"❌ Error: {e}\n\n", "error")
+            chat_log.see(END)
 
-    Label(mainFrame, text="Asistente Financiero", font=("Arial", 14)).place(x=100, y=10)
-    Button(mainFrame, text="Enviar", command=send_message).place(x=320, y=545)
-    Button(mainFrame, text="Volver", command=lambda: dashboard_w.Dashboard(root, mainFrame)).place(x=170, y=600)
+        # Deshabilitar nuevamente el área de texto
+        chat_log.config(state=DISABLED)
 
+    # Configurar estilos para los mensajes
+    chat_log.tag_configure("user", justify="right", foreground="black", background="#D1D5DB", wrap=WORD, lmargin1=100, rmargin=10)
+    chat_log.tag_configure("bot", justify="left", foreground="black", background="#93C5FD", wrap=WORD, lmargin1=10, rmargin=100)
+    chat_log.tag_configure("error", justify="center", foreground="red", background="#1E3A8A")
 
-    Label(mainFrame, text="Asistente Financiero", font=("Arial", 14)).place(x=100, y=10)
-    entry_box = Entry(mainFrame, width=40)
-    entry_box.place(x=10, y=550)
-    Button(mainFrame, text="Enviar", command=send_message).place(x=320, y=545)
-    Button(mainFrame, text="Volver", command=lambda: __volver_al_dashboard(root, mainFrame)).place(x=170, y=600)
+    # Botón "Volver" (bajado a y=650)
+    Button(mainFrame, text="Volver", command=lambda: dashboard_w.Dashboard(root, mainFrame), font=("Arial", 12),
+           bg="#41AADC", fg="white", activebackground="#0d8ddf", relief="flat", bd=0, padx=20, pady=5).place(relx=0.5, y=650, anchor="center")
 
 def __volver_al_dashboard(root, mainFrame):
     from windows_app import dashboard_window as dashboard_w
     dashboard_w.Dashboard(root, mainFrame)
-

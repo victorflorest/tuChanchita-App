@@ -1,23 +1,32 @@
-
 from tkinter import *
 from tkinter import messagebox as MessageBox
 import helpers.readfiles as readfiles
 import helpers.email_sender as mailer
 import random, string, os
-
 import windows_app.verify_token_window as verify_token_w
+import windows_app.login_window as login_w
+from PIL import Image, ImageTk
 
 def Recover(root, mainFrame):
     root.title("Recuperación de contraseña")
-    mainFrame.config(width=425, height=700, bg="white")
+    mainFrame.config(width=425, height=700)
     mainFrame.pack()
+
+    # Cargar fondo igual que en las otras ventanas
     my_path = readfiles.Route()
+    try:
+        bg_path = os.path.join(my_path, "images", "background-recover.png")
+        bg_image = Image.open(bg_path).resize((425, 700))
+        bg_photo = ImageTk.PhotoImage(bg_image)
+        mainFrame.bg_photo = bg_photo  # Evita que la imagen sea recolectada por el garbage collector
+        Label(mainFrame, image=bg_photo).place(x=0, y=0, relwidth=1, relheight=1)
+    except Exception as e:
+        print("⚠️ Error cargando fondo:", e)
+        mainFrame.config(bg="white")  # Fallback en caso de error
 
-    Label(mainFrame, text="Recuperar contraseña", font=("Arial", 14), bg="white").place(x=110, y=60)
-
-    Label(mainFrame, text="Correo registrado:", bg="white").place(x=70, y=150)
-    entry_email = Entry(mainFrame, width=30)
-    entry_email.place(x=70, y=175)
+    # Contenido de la ventana
+    entry_email = Entry(mainFrame, width=35)
+    entry_email.place(x=110, y=370)
 
     def generar_token():
         return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
@@ -61,4 +70,8 @@ def Recover(root, mainFrame):
         else:
             MessageBox.showerror("Error", "No se pudo enviar el correo. Revisa la configuración.")
 
-    Button(mainFrame, text="Enviar código", command=enviar_codigo).place(x=150, y=230)
+    Button(mainFrame, text="Enviar código", command=enviar_codigo,
+           font=("Arial", 11, "underline"), fg="white", bg="#41AADC", relief="flat", activebackground="#0d8ddf", bd=0, padx=19, pady=3).place(x=150, y=425)
+
+    Button(mainFrame, text="Volver", command=lambda: [mainFrame.destroy(), login_w.Login(root, Frame(root))], font=("Arial", 11), bg="#41AADC", fg="white", activebackground="#0d8ddf",
+           relief="flat", bd=0, padx=27, pady=3).place(x=166, y=486)

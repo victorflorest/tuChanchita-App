@@ -3,6 +3,7 @@ import windows_app.register_window as register_w
 import windows_app.reports_window as reports_w
 import windows_app.profile_window as profile_w
 import helpers.readfiles as readfiles
+from PIL import Image, ImageTk
 import os
 from datetime import date
 from tkinter import Label
@@ -79,6 +80,16 @@ def Dashboard(root, mainFrame):
     shownRegisters = CreateDashList()
     finalLimit = TakeLimit()
     Label(mainFrame, text = "Límite establecido:  " + finalLimit).place(x = 140, y = 50)
+    # Fondo
+    try:
+        ruta_fondo = os.path.join(readfiles.Route(), "images", "FONDO_PROTO.jpg")
+        fondo_img = Image.open(ruta_fondo).resize((425, 670))
+        fondo_photo = ImageTk.PhotoImage(fondo_img)
+        fondo_label = Label(mainFrame, image=fondo_photo)
+        fondo_label.image = fondo_photo  # Evitar que la imagen sea recolectada por el GC
+        fondo_label.place(x=0, y=0, relwidth=1, relheight=1)
+    except Exception as e:
+        print("⚠️ Error al cargar el fondo:", e)
 
     # Obtener correo
     ruta = readfiles.Route()
@@ -121,3 +132,6 @@ def Dashboard(root, mainFrame):
     Button(mainFrame, text="Chatbot", width=10, command=lambda: abrir_chatbot(root, mainFrame)).place(x=40, y=630)
     Button(mainFrame, text="Recomendaciones", width=14, command=lambda: rec_w.Recommendations(root, mainFrame)).place(x=140, y=630)
     Button(mainFrame, text="Salir", width=10, command=root.destroy).place(x=280, y=630)
+
+    for widget in mainFrame.winfo_children():
+        widget.lift()
